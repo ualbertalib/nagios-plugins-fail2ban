@@ -11,4 +11,3 @@ needed for this action.  Thus, the nagios userid can't unban an IP address, or p
 'status' actions. 
 
 ? Should I submit this back to the original maintainers?  Probably.
-? Should I update this to only use 'sudo' when we're not running as root? Probably.
