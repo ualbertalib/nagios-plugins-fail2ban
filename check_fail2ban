@@ -153,7 +153,9 @@ if(! -x $fail2ban_client_path) {
 }
 print "DEBUG : $fail2ban_client_path exists and is executable\n" if ($verbose_value);
 
-my $fail2ban_cmd = "/bin/sudo $fail2ban_client_path";
+my $fail2ban_cmd = "$fail2ban_client_path";  		# root user doesn't need sudo
+$fail2ban_cmd = "/bin/sudo $fail2ban_client_path"  if ($> != 0) ; # non-root users must run with sudo
+
 $fail2ban_cmd .= " -s $fail2ban_socket" if ($fail2ban_socket);
 
 print "DEBUG : final fail2ban command: $fail2ban_cmd\n" if ($verbose_value);
