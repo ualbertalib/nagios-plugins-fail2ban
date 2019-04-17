@@ -1,6 +1,7 @@
-# Lines matching CHECK_FAIL2BAN added by RPM 'UAL-nagios-fail2ban' 
+# Lines matching CHECK_FAIL2BAN added by RPM 'nagios-plugins-fail2ban'
 User_Alias CHECK_FAIL2BAN=nagios
 Defaults:CHECK_FAIL2BAN !requiretty
 CHECK_FAIL2BAN ALL=(root) NOPASSWD: /usr/bin/fail2ban-client status 
 CHECK_FAIL2BAN ALL=(root) NOPASSWD: /usr/bin/fail2ban-client ping 
-CHECK_FAIL2BAN ALL=(root) NOPASSWD: /usr/bin/fail2ban-client status  *
+CHECK_FAIL2BAN ALL=(root) NOPASSWD: /usr/bin/fail2ban-client status *
+CHECK_FAIL2BAN ALL=(root) NOPASSWD: /usr/bin/fail2ban-client set sshd unbanip * 

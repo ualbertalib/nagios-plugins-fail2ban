@@ -1,0 +1,55 @@
+#!/usr/bin/perl -wT
+# Author: Neil MacGregor
+# Date: April 17, 2019
+# Purpose: This is an eventhandler script, to be run by Nagios, whenever it discovers that fail2ban has banned an IP address.
+# The check_fail2ban plugin doesn't divulge the IP address of the offender, just a count of the number of banned entries. 
+# The problem is, we have an internal scanner, and IST has another, that regularly scan our servers, apparently trying to 
+# brute-force our SSH port, triggering fail2ban, and causing false-positives to be reported by Nagios. 
+# These amount to false-positives, reported by Nagios, and that's annoying.  So, let's have Nagios attempt to unban 
+# a list of known scanner IP addresses.  If that doesn't clear up the problem, we'll know fail2ban blocked an actual attack!
+# 
+# This is part of the "nagios-plugins-fail2ban" RPM, developed locally for UAL.
+
+# Input parameters: a list of IP addresses to be unbanned.
+
+use strict;
+use Data::Dumper;
+use Regexp::Common qw /net/;
+use Getopt::Std;
+
+$ENV{'PATH'} = "/usr/bin";
+my $cmd = "/usr/bin/sudo /usr/bin/fail2ban-client set sshd unbanip ";
+
+my $ofile=`date +%Y%m%d%H%M`;
+# process commandline input
+our %options;   # a hash containing the options on the commandline
+die "Bad options supplied on the commandline\n" unless getopts('i:', \%options); 
+
+#untaint those inputs
+#print Dumper \%options;
+my $IP_list = $options{'i'};
+&HELP_MESSAGE unless defined $IP_list;
+my @ips = split(/,/, $IP_list) ; 
+foreach my $ip (@ips){
+	# does that match a valid IP address?
+	#if ($ip =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/) {   # this is probably inefficient, wish I could guarantee Regexp::Common everywhere I was going
+	if ($ip =~ /^$RE{net}{IPv4}$/) {   
+		my $new_cmd = $cmd . $ip; 
+		print "Command: $new_cmd\n";
+		`$new_cmd`;
+		# execute that thing
+	} else {
+		print "Refusing to unban... not an IP address!\n";
+	}
+}
+
+# Called by Getopt::Std
+sub HELP_MESSAGE {
+	print "Usage: unban_scanners -i <ip>[,<ip>,<ip>...]\n"; 
+	exit;
+}
+
+sub VERSION_MESSAGE {
+	print "version 0.1\n";
+	exit;
+}
