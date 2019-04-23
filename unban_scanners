@@ -17,7 +17,7 @@ use Data::Dumper;
 use Regexp::Common qw /net/;
 use Getopt::Std;
 
-$ENV{'PATH'} = "/usr/bin";
+$ENV{'PATH'} = "/bin:/usr/bin";
 my $cmd = "/usr/bin/sudo /usr/bin/fail2ban-client set sshd unbanip ";
 
 my $ofile=`date +%Y%m%d%H%M`;
