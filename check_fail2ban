@@ -157,7 +157,6 @@ my $fail2ban_cmd = "$fail2ban_client_path";  		# root user doesn't need sudo
 if ($> != 0)  {  # non-root users must run with sudo
 	my $sudoCmd ;
 	$sudoCmd = "/usr/bin/sudo" if -e "/usr/bin/sudo";
-#	$sudoCmd = "/bin/sudo" if -e "/bin/sudo";
 	$fail2ban_cmd = "$sudoCmd $fail2ban_client_path"
 }
 
